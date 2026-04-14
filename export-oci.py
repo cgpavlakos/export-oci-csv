@@ -37,8 +37,10 @@ def get_compartment_map():
     print("Mapping compartments...")
     name_map = {tenancy_id: "root"}
     comps = oci.pagination.list_call_get_all_results(
-        identity_client.list_compartments, tenancy_id, 
-        compartment_id_in_subtree=True, access_level="ANY"
+        identity_client.list_compartments, 
+        compartment_id=tenancy_id, 
+        compartment_id_in_subtree=True, 
+        access_level="ANY"
     ).data
     for c in comps:
         name_map[c.id] = c.name
@@ -59,7 +61,8 @@ def generic_export(client_class, list_method_name, comp_map, csv_name, extract_f
     data_list = []
     for comp_id, comp_name in comp_map.items():
         try:
-            results = oci.pagination.list_call_get_all_results(method, comp_id).data
+            # Explicitly declare kwargs to bypass SDK signature inconsistencies
+            results = oci.pagination.list_call_get_all_results(method, compartment_id=comp_id).data
             for item in results:
                 # Filter out terminated resources to keep reports clean
                 if hasattr(item, 'lifecycle_state') and item.lifecycle_state in ["TERMINATED", "DELETED", "TERMINATING"]:
@@ -128,7 +131,10 @@ def export_identityOptions(comp_map):
     policy_list = []
     for comp_id, comp_name in comp_map.items():
         try:
-            policies = oci.pagination.list_call_get_all_results(identity_client.list_policies, comp_id).data
+            policies = oci.pagination.list_call_get_all_results(
+                identity_client.list_policies, 
+                compartment_id=comp_id
+            ).data
             for p in policies:
                 policy_list.append({"Name": p.name, "Compartment": comp_name, "Statements": " ; ".join(p.statements)})
         except: continue
@@ -166,14 +172,18 @@ def export_storage(comp_map):
     generic_export(oci.core.BlockstorageClient, "list_volumes", comp_map, "storage_block_volumes.csv", {"Name": "display_name", "Size(GB)": "size_in_gbs", "State": "lifecycle_state"})
     generic_export(oci.file_storage.FileStorageClient, "list_file_systems", comp_map, "storage_fss.csv", {"Name": "display_name", "State": "lifecycle_state"})
     
-    # Object Storage requires namespace lookup
+    # Object Storage explicitly mapped for keyword restrictions
     try:
         os_client = oci.object_storage.ObjectStorageClient(config)
         namespace = os_client.get_namespace().data
         bucket_list = []
         for comp_id, comp_name in comp_map.items():
             try:
-                buckets = oci.pagination.list_call_get_all_results(os_client.list_buckets, namespace, comp_id).data
+                buckets = oci.pagination.list_call_get_all_results(
+                    os_client.list_buckets, 
+                    namespace_name=namespace, 
+                    compartment_id=comp_id
+                ).data
                 for b in buckets:
                     bucket_list.append({"Compartment": comp_name, "Name": b.name, "Namespace": b.namespace})
             except: pass
@@ -248,7 +258,6 @@ def main():
         choice = input("Enter your choice: ").strip().lower()
         
         if choice == 'q':
-            # Cleanup empty dirs if cancelled early
             if not os.listdir(OUT_DIR):
                 os.rmdir(OUT_DIR)
             print("Exiting...")
