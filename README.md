@@ -1,4 +1,4 @@
-# oci-export
+# OCI Export to CSV
 export oci resources to a zipped folder of csvs
 
 A lightweight, dependency-free Python script to export Oracle Cloud Infrastructure (OCI) resource metadata into structured CSV files. Designed for quick audits and data extraction without the overhead of complex automation frameworks.
