@@ -31,7 +31,32 @@ The most efficient execution path is utilizing the built-in OCI Cloud Shell. It 
    python3 export-oci.py
    ```
 4. Follow the interactive menu to select your target services (or select `1` to export everything).
-5. Once completed, click the **Gear Icon** in the Cloud Shell terminal, select **Download**, and enter the generated zip filename (e.g., `oci_export_20260414_163022.zip`).
+   ```bash
+   ==================================================
+      Dependency-Free OCI Resource Exporter
+   ==================================================
+    1. Export All OCI Resources
+    2. Export Identity
+    3. Export Governance
+    4. Export Cost Management
+    5. Export Network
+    6. Export OCI Firewall
+    7. Export DNS Management
+    8. Export Compute
+    9. Export Storage
+   10. Export Databases
+   11. Export Load Balancers
+   12. Export Management Services
+   13. Export Developer Services
+   14. Export Security
+   15. Export Software-Defined Data Centers - OCVS
+    q. Quit
+   ==================================================
+   ```
+6. Once completed, click the **Gear Icon** in the Cloud Shell terminal, select **Download**, and enter the generated zip filename:
+   ```bash
+   oci_export_20260414_163022.zip
+   ```
 
 ## Output Structure
 The script generates a timestamped working directory (`oci_export_YYYYMMDD_HHMMSS/`) and outputs individual CSV files for each processed resource type. 
