@@ -24,7 +24,7 @@ The most efficient execution path is utilizing the built-in OCI Cloud Shell. It 
 1. Open **Cloud Shell** from the OCI Console.
 2. Download the script:
    ```bash
-   wget [https://raw.githubusercontent.com/](https://raw.githubusercontent.com/)<YOUR_GITHUB_HANDLE>/<REPO>/main/export-oci.py
+   wget https://raw.githubusercontent.com/cgpavlakos/export-oci-csv/refs/heads/main/export-oci.py
    ```
 3. Execute the script:
    ```bash
