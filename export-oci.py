@@ -170,9 +170,38 @@ def export_compute(comp_map):
 def export_storage(comp_map):
     print("\n--- Exporting Storage ---")
     generic_export(oci.core.BlockstorageClient, "list_volumes", comp_map, "storage_block_volumes.csv", {"Name": "display_name", "Size(GB)": "size_in_gbs", "State": "lifecycle_state"})
-    generic_export(oci.file_storage.FileStorageClient, "list_file_systems", comp_map, "storage_fss.csv", {"Name": "display_name", "State": "lifecycle_state"})
     
-    # Object Storage explicitly mapped for keyword restrictions
+    # File Storage explicitly mapped for AD requirement
+    try:
+        fss_client = oci.file_storage.FileStorageClient(config)
+        # Fetch ADs once at the tenancy level
+        ads = identity_client.list_availability_domains(tenancy_id).data
+        fss_list = []
+        
+        for comp_id, comp_name in comp_map.items():
+            for ad in ads:
+                try:
+                    file_systems = oci.pagination.list_call_get_all_results(
+                        fss_client.list_file_systems,
+                        compartment_id=comp_id,
+                        availability_domain=ad.name
+                    ).data
+                    for f in file_systems:
+                        if hasattr(f, 'lifecycle_state') and f.lifecycle_state in ["DELETED", "DELETING"]:
+                            continue
+                        fss_list.append({
+                            "Compartment": comp_name,
+                            "AD": ad.name,
+                            "Name": f.display_name,
+                            "State": f.lifecycle_state
+                        })
+                except oci.exceptions.ServiceError:
+                    pass # Skip if lacking permissions
+        write_csv("storage_fss.csv", ["Compartment", "AD", "Name", "State"], fss_list)
+    except Exception as e:
+        print(f"  [!] Failed to extract File Storage: {e}")
+    
+    # Object Storage explicitly mapped for namespace requirement
     try:
         os_client = oci.object_storage.ObjectStorageClient(config)
         namespace = os_client.get_namespace().data
@@ -186,7 +215,8 @@ def export_storage(comp_map):
                 ).data
                 for b in buckets:
                     bucket_list.append({"Compartment": comp_name, "Name": b.name, "Namespace": b.namespace})
-            except: pass
+            except oci.exceptions.ServiceError:
+                pass
         write_csv("storage_buckets.csv", ["Compartment", "Name", "Namespace"], bucket_list)
     except Exception as e:
         print(f"  [!] Failed to extract Object Storage: {e}")
