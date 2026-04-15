@@ -299,7 +299,7 @@ MENU_OPTIONS = {
 
 def display_menu():
     print("\n" + "="*50)
-    print("      Dependency-Free OCI Resource Exporter")
+    print("      Dependency-Free OCI Resource Exporter (Local)")
     print("="*50)
     for key, (name, _) in MENU_OPTIONS.items():
         print(f"{key:>2}. {name}")
