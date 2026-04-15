@@ -69,3 +69,67 @@ All generated CSVs standardize on the following baseline:
 Data arrays, such as user group memberships and IAM policy statements, are concatenated using a semicolon delimiter (` ; `). This preserves standard CSV tabular formatting and prevents row breaks in spreadsheet applications like Excel.
 
 Upon successful execution, the script compresses the working directory using standard DEFLATE compression and outputs the `.zip` archive in the root execution directory.
+
+## Supported Export Scope by Category
+
+Below is the comprehensive mapping of the OCI resources extracted by each menu option. The script automatically iterates through all available compartments and relevant Availability Domains/Namespaces to discover these resources.
+
+* **1. Export All OCI Resources**
+    * Executes all extraction modules below (Options 2 through 15) in a single run.
+* **2. Export Identity**
+    * Identity Domains (Discovers Default/Legacy IAM and secondary SCIM domains)
+    * Users & Group Memberships
+    * Groups
+    * IAM Policies
+    * Compartments
+* **3. Export Governance**
+    * Tenancy Quotas
+* **4. Export Cost Management**
+    * Budgets
+* **5. Export Network**
+    * Virtual Cloud Networks (VCNs) & Subnets
+    * Gateways (DRGs, IGWs, NAT, Service, and Local Peering Gateways)
+    * Security & Routing (Route Tables, Security Lists, NSGs)
+    * Connectivity (IPSec VPNs, FastConnect Virtual Circuits)
+* **6. Export OCI Firewall**
+    * Network Firewalls
+* **7. Export DNS Management**
+    * DNS Zones
+* **8. Export Compute**
+    * Compute Instances
+    * Dedicated VM Hosts
+    * Custom Images
+    * Instance Pools
+* **9. Export Storage**
+    * Block Volumes & Volume Backups
+    * File Storage Systems (FSS) & Mount Targets (Iterates across ADs)
+    * Object Storage Buckets (Mapped via Tenancy Namespace)
+* **10. Export Databases**
+    * VM/BM DB Systems
+    * Autonomous Databases (ADBs)
+    * NoSQL Tables
+    * PostgreSQL DB Systems
+    * GoldenGate Deployments
+* **11. Export Load Balancers**
+    * Load Balancers (LBR)
+    * Network Load Balancers (NLB)
+* **12. Export Management Services**
+    * Notifications (SNS Topics)
+    * Monitoring Alarms
+    * Logging (Log Groups)
+    * Application Performance Monitoring (APM Domains)
+* **13. Export Developer Services**
+    * Kubernetes (OKE Clusters)
+    * API Gateways & Deployments
+    * Functions (Applications)
+    * Streaming (Streams)
+    * Resource Manager (ORM Stacks)
+* **14. Export Security**
+    * Key Management (KMS Vaults)
+    * Vault Secrets
+    * Cloud Guard Targets
+    * Bastion Services
+    * Web Application Firewall (WAF) Policies
+    * Managed Certificates
+* **15. Export Software-Defined Data Centers - OCVS**
+    * VMware SDDC Clusters
