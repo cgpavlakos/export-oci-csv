@@ -58,6 +58,24 @@ The most efficient execution path is utilizing the built-in OCI Cloud Shell. It 
    oci_export_20260414_163022.zip
    ```
 
+## Quick Start: Local/Laptop/Desktop
+This assumes you already have OCI CLI set up with default config. 
+
+1. Download the script:
+   ```bash
+   wget https://raw.githubusercontent.com/cgpavlakos/export-oci-csv/refs/heads/main/export-oci-local.py
+   ```
+2. Execute the script:
+   ```bash
+   python3 export-oci-local.py
+   ```
+3. Follow the interactive menu to select your target services (or select `1` to export everything).
+ 
+4. You now have the zip file. 
+   ```bash
+   oci_export_20260414_163022.zip
+   ```
+
 ## Output Structure
 The script generates a timestamped working directory (`oci_export_YYYYMMDD_HHMMSS/`) and outputs individual CSV files for each processed resource type. 
 
